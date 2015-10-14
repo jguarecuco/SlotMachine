@@ -5,12 +5,11 @@
         fruits1: objects.Tile;
         fruits2: objects.Tile;
         fruits3: objects.Tile;
-        background: objects.Background;//createjs.Bitmap;
+        background: objects.Background;
         horizontalLine: createjs.Rectangle;
         spinCount1: number = 3;
         spinCount2: number = 5;
         spinCount3: number = 5;
-
 
         bet1Button: objects.BetButton;
         bet10Button: objects.BetButton;
@@ -23,12 +22,9 @@
         betLabel: objects.Label;
         winningsLabel: objects.Label;
         messageLabel: objects.Label;
-        // +++++++++++++++++
+        spinDoneCount: number = 0;
+        isSpinClicked: boolean = false;
 
-        //checkRange: any;
-        //determineWinnings: any;
-        //Reels: any;
-        // +++++++++++++++++
         isPlayable: boolean = false;
         bet: number = 0;
         credits: number = 1000;
@@ -44,6 +40,7 @@
         sevens: number = 0;
         blanks: number = 0;
 
+
         //winNumber: number = 0;
         //lossNumber: number = 0;
 
@@ -51,92 +48,43 @@
         constructor() {
             super();
         }
-
-        public update(): void {
-            // go spin
-            this.spinning(this.fruits1);        
-            this.spinning(this.fruits2);
-            this.spinning(this.fruits3);   
-
-        }
-
-        private spinning(fruitsX: objects.Tile): void {        
-              
-            if (fruitsX.value > 0) {
-                if (fruitsX.value > 2) {
-                    fruitsX.regY -= 7 * 2;
-                } else if (fruitsX.value > 1) {
-                    fruitsX.regY -= 7;
-                } else {
-                    fruitsX.regY -= 3;
-                }
-
-                if (fruitsX.regY <= 214) {
-                    fruitsX.regY = 767; // 214~766
-                    fruitsX.value--;
-                } 
-            } else if (fruitsX.value == 0) {
-                if (fruitsX.regY < fruitsX.goal - 2 || fruitsX.regY > fruitsX.goal + 2 ) {
-                    fruitsX.regY-= 2;
-                    if (fruitsX.regY <= 214) {
-                        fruitsX.regY = 767; // 214~766
-                    } 
-                }
-            }
-
-        }
+          
         // PUBLIC METHODS
-        public start(): void {         
-
-            // ===========================================================================
-          /*                                   goal:
-            this.bananas = 0;   // 1           284
-            this.bars = 0;      // 2           344
-            this.bells = 0;     // 3           412
-            this.cherries = 0;  // 4           487
-            this.grapes = 0;    // 5           550 
-            this.oranges = 0;   // 6           621   
-            this.sevens = 0;    // 7           685
-            this.blanks = 0;    // 8           214
-           */
-            // fruit 
-            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 241, 330, null, 214, 0, 212);
+        public start(): void {       
+                      
+            // fruit window
+            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 241, 330, null, 208, 5, 759);
             this.addChild(this.fruits1);          
             
-            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 320, 330, null, null, 0, 210);
+            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 320, 330, null, null, 5, 690);
             this.addChild(this.fruits2);    
                  
-            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 396, 330, null, 766, 0, 211);
+            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 396, 330, null, 766, 5, 205);
             this.addChild(this.fruits3); 
-            // ===========================================================================
-           
+
             // background
             this.background = new objects.Background("../../Assets/images/Background.png", 320, 240);
             this.addChild(this.background);
     
-
             // labels
             this.messageLabel = new objects.Label("Welcome!", "15px Consolas", "#00f", 600, 150);
             this.messageLabel.textAlign = "center";
 
             this.jackpotLabel = new objects.Label(this.normalize(this.jackpot, 6), "26px Consolas", "#f00", (190 + (640 - 375) * .5), 60);
 
-
             this.creditsLabel = new objects.Label(this.normalize(this.credits,6), "26px Consolas", "#f00", (93 + (640 - 375) * .5), 343);
             this.betLabel = new objects.Label(this.normalize(this.bet,3), "26px Consolas", "#f00", (167 + (640 - 375) * .5), 343);
             this.winningsLabel = new objects.Label(this.normalize(this.winnings, 6), "26px Consolas", "#f00", (282 + (640 - 375) * .5), 343);
+
             this.addChild(this.messageLabel);
             this.addChild(this.jackpotLabel);
             this.addChild(this.creditsLabel);
             this.addChild(this.betLabel);
             this.addChild(this.winningsLabel);
 
-            this.betLabel.text
             // bet1Button
             this.bet1Button = new objects.BetButton("../../Assets/images/Bet1Button.png", (53 + (640 - 375) * .5), 416, 60, 60, 1);
             this.bet1Button.on("click", function () {
-                //createjs.Sound.play("../../Assets/audio/buttonSound.ogg");
-
                 this.bet = this.bet1Button.value;
                 this.checkPlayable();
             }, this); 
@@ -145,8 +93,6 @@
             // bet10Button
             this.bet10Button = new objects.BetButton("../../Assets/images/Bet10Button.png", (118 + (640 - 375) * .5), 416, 60, 60, 10);
             this.bet10Button.on("click", function () {
-                //createjs.Sound.play("../../Assets/audio/buttonSound.ogg");
-
                 this.bet = this.bet10Button.value;
                 this.checkPlayable();
             }, this); 
@@ -155,8 +101,6 @@
             // bet100Button
             this.bet100Button = new objects.BetButton("../../Assets/images/Bet100Button.png", (183 + (640 - 375) * .5), 416, 60, 60, 100);
             this.bet100Button.on("click", function () {
-                //createjs.Sound.play("../../Assets/audio/buttonSound.ogg");
-
                 this.bet = this.bet100Button.value;
                 this.checkPlayable();
             }, this); 
@@ -165,7 +109,6 @@
             // betMaxButton
             this.betMaxButton = new objects.BetButton("../../Assets/images/BetMaxButton.png", (248 + (640 - 375) * .5), 416, 60, 60, 999);
             this.betMaxButton.on("click", function () {
-                //createjs.Sound.play("../../Assets/audio/buttonSound.ogg");
                 this.bet = this.betMaxButton.value;
                 this.checkPlayable();
             }, this); 
@@ -176,21 +119,57 @@
             this.spinButton.on("click", this.clickSpinButton, this); 
             this.addChild(this.spinButton);
 
-            // 
             this.horizontalLine = new createjs.Rectangle(320, 240, 320, 3);
             
-            //stage.addChild(this.horizontalLine);
-
             // final
             stage.addChild(this);
+            alert(this.isSpinClicked);
         }
 
+        public update(): void {
+            // go spin
+            if (this.isSpinClicked) {
+                this.spinning(this.fruits1);
+                this.spinning(this.fruits2);
+                this.spinning(this.fruits3);
+            }
+            if (this.spinDoneCount >= 3) {
+                this.resetFruits();
+            }
+        }
 
+        // --------------------------------------------------- PRIVATE METHODS------------------------------------------------------
+        private clickSpinButton(event: createjs.MouseEvent): void {
+
+            if (!this.isPlayable && this.bet != 0 && this.isSpinClicked == false) {
+
+                // get fruits so for result
+                var betLine: any = this.Reels();   // from Math.random() to generate betLine(), and set this.blank ... for determinWinnings();
+                this.fruits1.goal = this.setGoalByFruit(betLine[0]);// from betLine() to get goal for "this.fruits1"
+                this.fruits2.goal = this.setGoalByFruit(betLine[1]);
+                this.fruits3.goal = this.setGoalByFruit(betLine[2]);
+
+                // get result from fruits
+                var result = this.determineWinnings();  // from values of this.blanks ... to get result
+
+                // wait entil spin stop
+                if (this.spinDoneCount >= 3) {  // spinDoneCount++ after fruitX spin done 
+                    this.applyResult(result);   // from result to set this.credits ... 
+                    this.messageLabel.text = result > 0 ? ("You win:\n\n" + result) : ("You lose:\n\n" + (-result));
+                    this.messageLabel.color = result > 0 ? "#00f" : "#f00";
+                    if (this.credits < this.bet) {
+                        this.isPlayable = true;
+                        this.messageLabel.text = 'Not enough\n\ncredits!';
+                        this.messageLabel.color = "#f00";
+                    }
+                }
+            }     
+            //this.resetFruits();       
+        }
 
         private checkPlayable(): void {
             if (this.credits < this.bet) {
                 this.isPlayable = true;
-                //alert('Not enough credits to play.');
                 this.messageLabel.text = "Not enough\n\ncredits!";
                 this.messageLabel.color = "#f00";
                 this.bet = 0;
@@ -201,26 +180,39 @@
                 this.betLabel.text = this.normalize(this.bet, 3);                
             }
         }
+               
 
-        private clickSpinButton(event: createjs.MouseEvent): void {
-            if (!this.isPlayable && this.bet != 0) {
-                //createjs.Sound.play("../../Assets/audio/buttonSound.ogg");
+        private setGoalByFruit(fruit: string): number {
 
-                // get fruits
-                this.Reels();
-                // get result
-                var result = this.determineWinnings();
-                this.applyResult(result);
-                this.messageLabel.text = result > 0 ? ("You win:\n\n" + result) : ("You lose:\n\n" + (-result));
-                this.messageLabel.color = result > 0 ? "#00f" : "#f00";
-                if (this.credits < this.bet) {
-                    this.isPlayable = true;
-                    this.messageLabel.text = 'Not enough\n\ncredits!';
-                    this.messageLabel.color = "#f00";
-                }
-            }     
-            this.resetFruits();       
-       }
+            var goal: number;
+            switch (fruit) {
+                case "Banana":
+                    goal = 759;
+                    break;
+                case "Bar":
+                    goal = 276;
+                    break;
+                case "Bell":
+                    goal = 345;
+                    break;
+                case "Cherry":
+                    goal = 414;
+                    break;
+                case "Grapes":
+                    goal = 483;
+                    break;
+                case "Orange":
+                    goal = 552;
+                    break;
+                case "Seven":
+                    goal = 621;
+                    break;
+                case "blank":
+                    goal = 690;
+                    break;
+            }
+            return goal;
+        }
 
         private resetFruits(): void {
             this.bananas = 0;//1
@@ -231,6 +223,9 @@
             this.oranges = 0;// 6          
             this.sevens = 0;//7
             this.blanks = 0;  //8
+
+            this.spinDoneCount = 0;
+            this.isSpinClicked = false;
         }
 
         private resetAll(): void {
@@ -242,6 +237,10 @@
             //winNumber = 0;
             //lossNumber = 0;
             //winRatio = 0;
+
+            this.spinDoneCount = 0;
+            this.isSpinClicked = false;
+
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -297,9 +296,8 @@
                     result = this.bet * 1;
                 }
             } else {
-                result = - this.bet;
+                result = -this.bet;
             }
-
             return result;//$ 
         } // end of this.determineWinnings = function(): void 
 
@@ -393,5 +391,25 @@
             }
             return betLine; 
         } // end of this.Reels = function (): any
+      
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+        private spinning(fruitsX: objects.Tile): void {        
+            // get step
+            var step = 3;
+            if (fruitsX.value >= 2) { step = 23; }
+            else if (fruitsX.value >= 1 && fruitsX.value < 2) { step = 12; }
+            else if (fruitsX.value >= 0 && fruitsX.value < 1) { step = 3; }
+            if (fruitsX.regY <= 207 - step) {
+                fruitsX.regY = 759; // 207 is equal to 759,  then go to 759, but it cause one tick?
+                fruitsX.value--;
+            } 
+            // keep going
+            if (!(fruitsX.value == 0 && fruitsX.regY <= fruitsX.goal + step * 2 && fruitsX.regY >= fruitsX.goal - step * 2)) {
+                fruitsX.regY -= step;
+            } else {
+                this.spinDoneCount++;
+            }
+        }
+
     }
 } 

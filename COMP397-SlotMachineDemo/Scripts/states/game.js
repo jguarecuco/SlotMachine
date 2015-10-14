@@ -16,11 +16,8 @@ var states;
             this.spinCount1 = 3;
             this.spinCount2 = 5;
             this.spinCount3 = 5;
-            // +++++++++++++++++
-            //checkRange: any;
-            //determineWinnings: any;
-            //Reels: any;
-            // +++++++++++++++++
+            this.spinDoneCount = 0;
+            this.isSpinClicked = false;
             this.isPlayable = false;
             this.bet = 0;
             this.credits = 1000;
@@ -35,58 +32,15 @@ var states;
             this.sevens = 0;
             this.blanks = 0;
         }
-        Game.prototype.update = function () {
-            // go spin
-            this.spinning(this.fruits1);
-            this.spinning(this.fruits2);
-            this.spinning(this.fruits3);
-        };
-        Game.prototype.spinning = function (fruitsX) {
-            if (fruitsX.value > 0) {
-                if (fruitsX.value > 2) {
-                    fruitsX.regY -= 7 * 2;
-                }
-                else if (fruitsX.value > 1) {
-                    fruitsX.regY -= 7;
-                }
-                else {
-                    fruitsX.regY -= 3;
-                }
-                if (fruitsX.regY <= 214) {
-                    fruitsX.regY = 767; // 214~766
-                    fruitsX.value--;
-                }
-            }
-            else if (fruitsX.value == 0) {
-                if (fruitsX.regY < fruitsX.goal - 2 || fruitsX.regY > fruitsX.goal + 2) {
-                    fruitsX.regY -= 2;
-                    if (fruitsX.regY <= 214) {
-                        fruitsX.regY = 767; // 214~766
-                    }
-                }
-            }
-        };
         // PUBLIC METHODS
         Game.prototype.start = function () {
-            // ===========================================================================
-            /*                                   goal:
-              this.bananas = 0;   // 1           284
-              this.bars = 0;      // 2           344
-              this.bells = 0;     // 3           412
-              this.cherries = 0;  // 4           487
-              this.grapes = 0;    // 5           550
-              this.oranges = 0;   // 6           621
-              this.sevens = 0;    // 7           685
-              this.blanks = 0;    // 8           214
-             */
-            // fruit 
-            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 241, 330, null, 214, 0, 212);
+            // fruit window
+            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 241, 330, null, 208, 5, 759);
             this.addChild(this.fruits1);
-            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 320, 330, null, null, 0, 210);
+            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 320, 330, null, null, 5, 690);
             this.addChild(this.fruits2);
-            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 396, 330, null, 766, 0, 211);
+            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 396, 330, null, 766, 5, 205);
             this.addChild(this.fruits3);
-            // ===========================================================================
             // background
             this.background = new objects.Background("../../Assets/images/Background.png", 320, 240);
             this.addChild(this.background);
@@ -102,11 +56,9 @@ var states;
             this.addChild(this.creditsLabel);
             this.addChild(this.betLabel);
             this.addChild(this.winningsLabel);
-            this.betLabel.text;
             // bet1Button
             this.bet1Button = new objects.BetButton("../../Assets/images/Bet1Button.png", (53 + (640 - 375) * .5), 416, 60, 60, 1);
             this.bet1Button.on("click", function () {
-                //createjs.Sound.play("../../Assets/audio/buttonSound.ogg");
                 this.bet = this.bet1Button.value;
                 this.checkPlayable();
             }, this);
@@ -114,7 +66,6 @@ var states;
             // bet10Button
             this.bet10Button = new objects.BetButton("../../Assets/images/Bet10Button.png", (118 + (640 - 375) * .5), 416, 60, 60, 10);
             this.bet10Button.on("click", function () {
-                //createjs.Sound.play("../../Assets/audio/buttonSound.ogg");
                 this.bet = this.bet10Button.value;
                 this.checkPlayable();
             }, this);
@@ -122,7 +73,6 @@ var states;
             // bet100Button
             this.bet100Button = new objects.BetButton("../../Assets/images/Bet100Button.png", (183 + (640 - 375) * .5), 416, 60, 60, 100);
             this.bet100Button.on("click", function () {
-                //createjs.Sound.play("../../Assets/audio/buttonSound.ogg");
                 this.bet = this.bet100Button.value;
                 this.checkPlayable();
             }, this);
@@ -130,7 +80,6 @@ var states;
             // betMaxButton
             this.betMaxButton = new objects.BetButton("../../Assets/images/BetMaxButton.png", (248 + (640 - 375) * .5), 416, 60, 60, 999);
             this.betMaxButton.on("click", function () {
-                //createjs.Sound.play("../../Assets/audio/buttonSound.ogg");
                 this.bet = this.betMaxButton.value;
                 this.checkPlayable();
             }, this);
@@ -139,16 +88,49 @@ var states;
             this.spinButton = new objects.BetButton("../../Assets/images/SpinButton.png", (319 + (640 - 375) * .5), 416, 60, 60, 0);
             this.spinButton.on("click", this.clickSpinButton, this);
             this.addChild(this.spinButton);
-            // 
             this.horizontalLine = new createjs.Rectangle(320, 240, 320, 3);
-            //stage.addChild(this.horizontalLine);
             // final
             stage.addChild(this);
+            alert(this.isSpinClicked);
+        };
+        Game.prototype.update = function () {
+            // go spin
+            if (this.isSpinClicked) {
+                this.spinning(this.fruits1);
+                this.spinning(this.fruits2);
+                this.spinning(this.fruits3);
+            }
+            if (this.spinDoneCount >= 3) {
+                this.resetFruits();
+            }
+        };
+        // --------------------------------------------------- PRIVATE METHODS------------------------------------------------------
+        Game.prototype.clickSpinButton = function (event) {
+            if (!this.isPlayable && this.bet != 0 && this.isSpinClicked == false) {
+                // get fruits so for result
+                var betLine = this.Reels(); // from Math.random() to generate betLine(), and set this.blank ... for determinWinnings();
+                this.fruits1.goal = this.setGoalByFruit(betLine[0]); // from betLine() to get goal for "this.fruits1"
+                this.fruits2.goal = this.setGoalByFruit(betLine[1]);
+                this.fruits3.goal = this.setGoalByFruit(betLine[2]);
+                // get result from fruits
+                var result = this.determineWinnings(); // from values of this.blanks ... to get result
+                // wait entil spin stop
+                if (this.spinDoneCount >= 3) {
+                    this.applyResult(result); // from result to set this.credits ... 
+                    this.messageLabel.text = result > 0 ? ("You win:\n\n" + result) : ("You lose:\n\n" + (-result));
+                    this.messageLabel.color = result > 0 ? "#00f" : "#f00";
+                    if (this.credits < this.bet) {
+                        this.isPlayable = true;
+                        this.messageLabel.text = 'Not enough\n\ncredits!';
+                        this.messageLabel.color = "#f00";
+                    }
+                }
+            }
+            //this.resetFruits();       
         };
         Game.prototype.checkPlayable = function () {
             if (this.credits < this.bet) {
                 this.isPlayable = true;
-                //alert('Not enough credits to play.');
                 this.messageLabel.text = "Not enough\n\ncredits!";
                 this.messageLabel.color = "#f00";
                 this.bet = 0;
@@ -159,23 +141,35 @@ var states;
                 this.betLabel.text = this.normalize(this.bet, 3);
             }
         };
-        Game.prototype.clickSpinButton = function (event) {
-            if (!this.isPlayable && this.bet != 0) {
-                //createjs.Sound.play("../../Assets/audio/buttonSound.ogg");
-                // get fruits
-                this.Reels();
-                // get result
-                var result = this.determineWinnings();
-                this.applyResult(result);
-                this.messageLabel.text = result > 0 ? ("You win:\n\n" + result) : ("You lose:\n\n" + (-result));
-                this.messageLabel.color = result > 0 ? "#00f" : "#f00";
-                if (this.credits < this.bet) {
-                    this.isPlayable = true;
-                    this.messageLabel.text = 'Not enough\n\ncredits!';
-                    this.messageLabel.color = "#f00";
-                }
+        Game.prototype.setGoalByFruit = function (fruit) {
+            var goal;
+            switch (fruit) {
+                case "Banana":
+                    goal = 759;
+                    break;
+                case "Bar":
+                    goal = 276;
+                    break;
+                case "Bell":
+                    goal = 345;
+                    break;
+                case "Cherry":
+                    goal = 414;
+                    break;
+                case "Grapes":
+                    goal = 483;
+                    break;
+                case "Orange":
+                    goal = 552;
+                    break;
+                case "Seven":
+                    goal = 621;
+                    break;
+                case "blank":
+                    goal = 690;
+                    break;
             }
-            this.resetFruits();
+            return goal;
         };
         Game.prototype.resetFruits = function () {
             this.bananas = 0; //1
@@ -186,6 +180,8 @@ var states;
             this.oranges = 0; // 6          
             this.sevens = 0; //7
             this.blanks = 0; //8
+            this.spinDoneCount = 0;
+            this.isSpinClicked = false;
         };
         Game.prototype.resetAll = function () {
             this.credits = 1000;
@@ -196,6 +192,8 @@ var states;
             //winNumber = 0;
             //lossNumber = 0;
             //winRatio = 0;
+            this.spinDoneCount = 0;
+            this.isSpinClicked = false;
         };
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++
         Game.prototype.determineWinnings = function () {
@@ -337,6 +335,31 @@ var states;
             }
             return betLine;
         }; // end of this.Reels = function (): any
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+        Game.prototype.spinning = function (fruitsX) {
+            // get step
+            var step = 3;
+            if (fruitsX.value >= 2) {
+                step = 23;
+            }
+            else if (fruitsX.value >= 1 && fruitsX.value < 2) {
+                step = 12;
+            }
+            else if (fruitsX.value >= 0 && fruitsX.value < 1) {
+                step = 3;
+            }
+            if (fruitsX.regY <= 207 - step) {
+                fruitsX.regY = 759; // 207 is equal to 759,  then go to 759, but it cause one tick?
+                fruitsX.value--;
+            }
+            // keep going
+            if (!(fruitsX.value == 0 && fruitsX.regY <= fruitsX.goal + step * 2 && fruitsX.regY >= fruitsX.goal - step * 2)) {
+                fruitsX.regY -= step;
+            }
+            else {
+                this.spinDoneCount++;
+            }
+        };
         return Game;
     })(objects.Scene);
     states.Game = Game;
