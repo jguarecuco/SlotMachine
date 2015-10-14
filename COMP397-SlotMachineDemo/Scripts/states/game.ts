@@ -57,9 +57,6 @@
             this.spinning(this.fruits1);        
             this.spinning(this.fruits2);
             this.spinning(this.fruits3);   
-            //this.spinning(this.fruits2, this.spinCount2, 2);       
-            //this.spinning(this.fruits3, this.spinCount3, 2);         
-                
 
         }
 
@@ -77,6 +74,13 @@
                 if (fruitsX.regY <= 214) {
                     fruitsX.regY = 767; // 214~766
                     fruitsX.value--;
+                } 
+            } else if (fruitsX.value == 0) {
+                if (fruitsX.regY < fruitsX.goal - 2 || fruitsX.regY > fruitsX.goal + 2 ) {
+                    fruitsX.regY-= 2;
+                    if (fruitsX.regY <= 214) {
+                        fruitsX.regY = 767; // 214~766
+                    } 
                 }
             }
 
@@ -85,15 +89,24 @@
         public start(): void {         
 
             // ===========================================================================
-          
+          /*                                   goal:
+            this.bananas = 0;   // 1           284
+            this.bars = 0;      // 2           344
+            this.bells = 0;     // 3           412
+            this.cherries = 0;  // 4           487
+            this.grapes = 0;    // 5           550 
+            this.oranges = 0;   // 6           621   
+            this.sevens = 0;    // 7           685
+            this.blanks = 0;    // 8           214
+           */
             // fruit 
-            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 241, 330, null, 214, 3);
+            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 241, 330, null, 214, 0, 212);
             this.addChild(this.fruits1);          
             
-            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 320, 330, null, null, 3);
+            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 320, 330, null, null, 0, 210);
             this.addChild(this.fruits2);    
                  
-            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 396, 330, null, 766, 3);
+            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 396, 330, null, 766, 0, 211);
             this.addChild(this.fruits3); 
             // ===========================================================================
            
