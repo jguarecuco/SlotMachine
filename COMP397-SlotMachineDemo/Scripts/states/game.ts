@@ -6,6 +6,7 @@
         fruits2: objects.Tile;
         fruits3: objects.Tile;
         background: objects.Background;//createjs.Bitmap;
+        horizontalLine: createjs.Rectangle;
 
         bet1Button: objects.BetButton;
         bet10Button: objects.BetButton;
@@ -47,6 +48,12 @@
             super();
         }
 
+        public update(): void {
+            if (this.fruits1.regY <= 214) {
+                this.fruits1.regY = 767; // 214~766
+            }
+            this.fruits1.regY -= 7 * 2;
+        }
 
         // PUBLIC METHODS
         public start(): void {         
@@ -54,13 +61,13 @@
             // ===========================================================================
           
             // fruit 
-            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet.png", 241, 330, null, 80);
+            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 241, 330, null, 214);
             this.addChild(this.fruits1);          
             
-            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet.png", 320, 330, null, null);
+            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 320, 330, null, null);
             this.addChild(this.fruits2);    
                  
-            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet.png", 396, 330, null, 780);
+            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 396, 330, null, 766);
             this.addChild(this.fruits3); 
             // ===========================================================================
            
@@ -123,11 +130,16 @@
             this.spinButton.on("click", this.clickSpinButton, this); 
             this.addChild(this.spinButton);
 
+            // 
+            this.horizontalLine = new createjs.Rectangle(320, 240, 320, 3);
+            
+            //stage.addChild(this.horizontalLine);
+
+            // final
             stage.addChild(this);
         }
 
-        public update(): void {
-        }
+
 
         private checkPlayable(): void {
             if (this.credits < this.bet) {

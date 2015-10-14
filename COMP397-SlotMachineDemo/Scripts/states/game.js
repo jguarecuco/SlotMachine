@@ -32,15 +32,21 @@ var states;
             this.sevens = 0;
             this.blanks = 0;
         }
+        Game.prototype.update = function () {
+            if (this.fruits1.regY <= 214) {
+                this.fruits1.regY = 767; // 214~766
+            }
+            this.fruits1.regY -= 7 * 2;
+        };
         // PUBLIC METHODS
         Game.prototype.start = function () {
             // ===========================================================================
             // fruit 
-            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet.png", 241, 330, null, 80);
+            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 241, 330, null, 214);
             this.addChild(this.fruits1);
-            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet.png", 320, 330, null, null);
+            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 320, 330, null, null);
             this.addChild(this.fruits2);
-            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet.png", 396, 330, null, 780);
+            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 396, 330, null, 766);
             this.addChild(this.fruits3);
             // ===========================================================================
             // background
@@ -91,9 +97,11 @@ var states;
             this.spinButton = new objects.BetButton("../../Assets/images/SpinButton.png", (319 + (640 - 375) * .5), 416, 60, 60, 0);
             this.spinButton.on("click", this.clickSpinButton, this);
             this.addChild(this.spinButton);
+            // 
+            this.horizontalLine = new createjs.Rectangle(320, 240, 320, 3);
+            //stage.addChild(this.horizontalLine);
+            // final
             stage.addChild(this);
-        };
-        Game.prototype.update = function () {
         };
         Game.prototype.checkPlayable = function () {
             if (this.credits < this.bet) {
