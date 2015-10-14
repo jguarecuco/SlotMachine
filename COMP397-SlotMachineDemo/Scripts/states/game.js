@@ -13,6 +13,9 @@ var states;
         // CONSTRUCTOR
         function Game() {
             _super.call(this);
+            this.spinCount1 = 3;
+            this.spinCount2 = 5;
+            this.spinCount3 = 5;
             // +++++++++++++++++
             //checkRange: any;
             //determineWinnings: any;
@@ -33,20 +36,39 @@ var states;
             this.blanks = 0;
         }
         Game.prototype.update = function () {
-            if (this.fruits1.regY <= 214) {
-                this.fruits1.regY = 767; // 214~766
+            // go spin
+            this.spinning(this.fruits1);
+            this.spinning(this.fruits2);
+            this.spinning(this.fruits3);
+            //this.spinning(this.fruits2, this.spinCount2, 2);       
+            //this.spinning(this.fruits3, this.spinCount3, 2);         
+        };
+        Game.prototype.spinning = function (fruitsX) {
+            if (fruitsX.value > 0) {
+                if (fruitsX.value > 2) {
+                    fruitsX.regY -= 7 * 2;
+                }
+                else if (fruitsX.value > 1) {
+                    fruitsX.regY -= 7;
+                }
+                else {
+                    fruitsX.regY -= 3;
+                }
+                if (fruitsX.regY <= 214) {
+                    fruitsX.regY = 767; // 214~766
+                    fruitsX.value--;
+                }
             }
-            this.fruits1.regY -= 7 * 2;
         };
         // PUBLIC METHODS
         Game.prototype.start = function () {
             // ===========================================================================
             // fruit 
-            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 241, 330, null, 214);
+            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 241, 330, null, 214, 3);
             this.addChild(this.fruits1);
-            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 320, 330, null, null);
+            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 320, 330, null, null, 3);
             this.addChild(this.fruits2);
-            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 396, 330, null, 766);
+            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 396, 330, null, 766, 3);
             this.addChild(this.fruits3);
             // ===========================================================================
             // background
@@ -68,6 +90,7 @@ var states;
             // bet1Button
             this.bet1Button = new objects.BetButton("../../Assets/images/Bet1Button.png", (53 + (640 - 375) * .5), 416, 60, 60, 1);
             this.bet1Button.on("click", function () {
+                //createjs.Sound.play("../../Assets/audio/buttonSound.ogg");
                 this.bet = this.bet1Button.value;
                 this.checkPlayable();
             }, this);
@@ -75,6 +98,7 @@ var states;
             // bet10Button
             this.bet10Button = new objects.BetButton("../../Assets/images/Bet10Button.png", (118 + (640 - 375) * .5), 416, 60, 60, 10);
             this.bet10Button.on("click", function () {
+                //createjs.Sound.play("../../Assets/audio/buttonSound.ogg");
                 this.bet = this.bet10Button.value;
                 this.checkPlayable();
             }, this);
@@ -82,6 +106,7 @@ var states;
             // bet100Button
             this.bet100Button = new objects.BetButton("../../Assets/images/Bet100Button.png", (183 + (640 - 375) * .5), 416, 60, 60, 100);
             this.bet100Button.on("click", function () {
+                //createjs.Sound.play("../../Assets/audio/buttonSound.ogg");
                 this.bet = this.bet100Button.value;
                 this.checkPlayable();
             }, this);
@@ -89,6 +114,7 @@ var states;
             // betMaxButton
             this.betMaxButton = new objects.BetButton("../../Assets/images/BetMaxButton.png", (248 + (640 - 375) * .5), 416, 60, 60, 999);
             this.betMaxButton.on("click", function () {
+                //createjs.Sound.play("../../Assets/audio/buttonSound.ogg");
                 this.bet = this.betMaxButton.value;
                 this.checkPlayable();
             }, this);
@@ -119,6 +145,7 @@ var states;
         };
         Game.prototype.clickSpinButton = function (event) {
             if (!this.isPlayable && this.bet != 0) {
+                //createjs.Sound.play("../../Assets/audio/buttonSound.ogg");
                 // get fruits
                 this.Reels();
                 // get result

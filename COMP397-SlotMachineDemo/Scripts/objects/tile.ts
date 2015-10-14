@@ -3,8 +3,9 @@
     export class Tile extends createjs.Bitmap {
         width:number;
         height: number;
+        value: number;
 
-        constructor(fullPath: string, x: number, y: number, regX:number, regY:number) {
+        constructor(fullPath: string, x: number, y: number, regX:number, regY:number, value:number) {
 
             super(fullPath);
             this.x = x;
@@ -27,6 +28,11 @@
                 this.regY = regY;
             }
             
+            if (value != null && value != undefined && value > 0) {
+                this.value = value;
+            } else {
+                this.value = 0;
+            }
         }
     }
 }

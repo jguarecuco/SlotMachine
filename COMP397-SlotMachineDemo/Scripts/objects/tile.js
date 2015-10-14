@@ -7,7 +7,7 @@ var objects;
 (function (objects) {
     var Tile = (function (_super) {
         __extends(Tile, _super);
-        function Tile(fullPath, x, y, regX, regY) {
+        function Tile(fullPath, x, y, regX, regY, value) {
             _super.call(this, fullPath);
             this.x = x;
             this.y = y;
@@ -24,6 +24,12 @@ var objects;
             }
             else {
                 this.regY = regY;
+            }
+            if (value != null && value != undefined && value > 0) {
+                this.value = value;
+            }
+            else {
+                this.value = 0;
             }
         }
         return Tile;
