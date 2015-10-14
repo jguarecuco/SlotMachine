@@ -8,6 +8,7 @@
 /// <reference path="../typings/soundjs/soundjs.d.ts" />
 /// <reference path="../typings/preloadjs/preloadjs.d.ts" />
 
+/// <reference path="../objects/tile.ts" />
 
 /// <reference path="../objects/label.ts" />
 /// <reference path="../objects/button.ts" />
@@ -41,16 +42,16 @@ var over: states.Over;
 var manifest = [
     { id: "BackButton",     src: "../../Assets/images/BackButton.png" },
     { id: "NextButton",     src: "../../Assets/images/NextButton.png" },
-    { id: "StartButton",    src: "../../Assets/images/StartButton.png" },    
-    { id: "Background",     src: "../../Assets/images/Background.png" },    
+    { id: "StartButton", src: "../../Assets/images/StartButton.png" },
+    { id: "Background", src: "../../Assets/images/Background.png" },    
     { id: "Bet1Button",     src: "../../Assets/images/Bet1Button.png" },
     { id: "Bet10Button",    src: "../../Assets/images/Bet10Button.png" },
     { id: "Bet100Button",   src: "../../Assets/images/Bet100Button.png" },
     { id: "BetMaxButton",   src: "../../Assets/images/BetMaxButton.png" },
     { id: "SpinButton",     src: "../../Assets/images/SpinButton.png" },
+    { id: "fruitsSheet", src: "../../Assets/images/fruitsSheet.png" },
     { id: "yay",            src: "../../Assets/audio/yay.ogg" },
     { id: "buttonSound",    src: "../../Assets/audio/buttonSound.ogg" } // not work ?
-    
 ];
 
 function preload(): void {

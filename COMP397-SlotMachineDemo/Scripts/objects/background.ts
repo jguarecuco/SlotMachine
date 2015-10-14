@@ -4,11 +4,11 @@
         width: number;
         height: number;
         //CONSTRUCTOR
-        constructor(pathString: string, x: number, y: number) {
-            super(assets.getResult(pathString));
+        constructor(fullPath: string, x: number, y: number) {
+            super(fullPath);
             this.x = x;
             this.y = y;
-
+            
             this.width = 375;
             this.height = 480;
 

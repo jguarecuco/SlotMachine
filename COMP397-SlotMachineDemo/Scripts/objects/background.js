@@ -8,8 +8,8 @@ var objects;
     var Background = (function (_super) {
         __extends(Background, _super);
         //CONSTRUCTOR
-        function Background(pathString, x, y) {
-            _super.call(this, assets.getResult(pathString));
+        function Background(fullPath, x, y) {
+            _super.call(this, fullPath);
             this.x = x;
             this.y = y;
             this.width = 375;

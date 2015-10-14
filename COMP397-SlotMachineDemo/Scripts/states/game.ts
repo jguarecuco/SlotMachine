@@ -2,6 +2,9 @@
     // GAME CLASS
     export class Game extends objects.Scene {
 
+        fruits1: objects.Tile;
+        fruits2: objects.Tile;
+        fruits3: objects.Tile;
         background: objects.Background;//createjs.Bitmap;
 
         bet1Button: objects.BetButton;
@@ -44,14 +47,28 @@
             super();
         }
 
+
         // PUBLIC METHODS
         public start(): void {         
 
-            // ================================================================================================
-            // background
-            this.background = new objects.Background("Background", 320, 240);
-            this.addChild(this.background);
+            // ===========================================================================
+          
+            // fruit 
+            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet.png", 241, 330, null, 80);
+            this.addChild(this.fruits1);          
             
+            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet.png", 320, 330, null, null);
+            this.addChild(this.fruits2);    
+                 
+            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet.png", 396, 330, null, 780);
+            this.addChild(this.fruits3); 
+            // ===========================================================================
+           
+            // background
+            this.background = new objects.Background("../../Assets/images/Background.png", 320, 240);
+            this.addChild(this.background);
+    
+
             // labels
             this.messageLabel = new objects.Label("Welcome!", "15px Consolas", "#00f", 600, 150);
             this.messageLabel.textAlign = "center";
@@ -146,14 +163,14 @@
        }
 
         private resetFruits(): void {
-            this.grapes = 0;
-            this.bananas = 0;
-            this.oranges = 0;
-            this.cherries = 0;
-            this.bars = 0;
-            this.bells = 0;
-            this.sevens = 0;
-            this.blanks = 0;
+            this.bananas = 0;//1
+            this.bars = 0;// 2
+            this.bells = 0;// 3
+            this.cherries = 0;//4
+            this.grapes = 0;// 5            
+            this.oranges = 0;// 6          
+            this.sevens = 0;//7
+            this.blanks = 0;  //8
         }
 
         private resetAll(): void {

@@ -60,12 +60,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\images\BackButton.png" />
-    <Content Include="Assets\images\background.jpg" />
     <Content Include="Assets\images\Background.png" />
     <Content Include="Assets\images\Bet100Button.png" />
     <Content Include="Assets\images\Bet10Button.png" />
     <Content Include="Assets\images\Bet1Button.png" />
     <Content Include="Assets\images\BetMaxButton.png" />
+    <Content Include="Assets\images\fruitsSheet.png" />
     <Content Include="Assets\images\genericButton.png" />
     <Content Include="Assets\images\NextButton.png" />
     <Content Include="Assets\images\SpinButton.png" />
@@ -112,6 +112,7 @@
     <TypeScriptCompile Include="Scripts\objects\button.ts" />
     <TypeScriptCompile Include="Scripts\objects\label.ts" />
     <TypeScriptCompile Include="Scripts\objects\scene.ts" />
+    <TypeScriptCompile Include="Scripts\objects\tile.ts" />
     <TypeScriptCompile Include="Scripts\states\game.ts" />
     <TypeScriptCompile Include="Scripts\states\menu.ts" />
     <TypeScriptCompile Include="Scripts\states\over.ts" />
