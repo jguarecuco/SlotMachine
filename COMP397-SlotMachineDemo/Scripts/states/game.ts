@@ -123,34 +123,42 @@
             
             // final
             stage.addChild(this);
-            alert(this.isSpinClicked);
+            //alert(this.isSpinClicked);
         }
 
         public update(): void {
             // go spin
+            //console.log("run into update: 0");
+            
             if (this.isSpinClicked) {
+                console.log("run into update: if");
                 this.spinning(this.fruits1);
                 this.spinning(this.fruits2);
                 this.spinning(this.fruits3);
             }
             if (this.spinDoneCount >= 3) {
                 this.resetFruits();
+                console.log("run into update: if2");
             }
         }
 
         // --------------------------------------------------- PRIVATE METHODS------------------------------------------------------
         private clickSpinButton(event: createjs.MouseEvent): void {
+            this.checkPlayable();
 
-            if (!this.isPlayable && this.bet != 0 && this.isSpinClicked == false) {
-
+            if (this.isPlayable && this.bet != 0 && !this.isSpinClicked) {
+                this.isSpinClicked = true;
                 // get fruits so for result
                 var betLine: any = this.Reels();   // from Math.random() to generate betLine(), and set this.blank ... for determinWinnings();
+                console.log(betLine[0] + " " + betLine[1] + " " + betLine[2]);
+
                 this.fruits1.goal = this.setGoalByFruit(betLine[0]);// from betLine() to get goal for "this.fruits1"
                 this.fruits2.goal = this.setGoalByFruit(betLine[1]);
                 this.fruits3.goal = this.setGoalByFruit(betLine[2]);
-
+                console.log(this.fruits1.goal + "," + this.fruits2.goal + "," + this.fruits3.goal);
                 // get result from fruits
                 var result = this.determineWinnings();  // from values of this.blanks ... to get result
+                console.log("result: " + result + ", this.spinDoneCount: "+this.spinDoneCount);
 
                 // wait entil spin stop
                 if (this.spinDoneCount >= 3) {  // spinDoneCount++ after fruitX spin done 
@@ -169,14 +177,14 @@
 
         private checkPlayable(): void {
             if (this.credits < this.bet) {
-                this.isPlayable = true;
+                this.isPlayable = false;
                 this.messageLabel.text = "Not enough\n\ncredits!";
                 this.messageLabel.color = "#f00";
                 this.bet = 0;
                 this.betLabel.text = this.normalize(this.bet, 3);
             }
             else {
-                this.isPlayable = false;
+                this.isPlayable = true;
                 this.betLabel.text = this.normalize(this.bet, 3);                
             }
         }
@@ -395,20 +403,27 @@
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
         private spinning(fruitsX: objects.Tile): void {        
             // get step
-            var step = 3;
-            if (fruitsX.value >= 2) { step = 23; }
-            else if (fruitsX.value >= 1 && fruitsX.value < 2) { step = 12; }
-            else if (fruitsX.value >= 0 && fruitsX.value < 1) { step = 3; }
-            if (fruitsX.regY <= 207 - step) {
-                fruitsX.regY = 759; // 207 is equal to 759,  then go to 759, but it cause one tick?
-                fruitsX.value--;
-            } 
-            // keep going
-            if (!(fruitsX.value == 0 && fruitsX.regY <= fruitsX.goal + step * 2 && fruitsX.regY >= fruitsX.goal - step * 2)) {
-                fruitsX.regY -= step;
-            } else {
-                this.spinDoneCount++;
+            if (this.isSpinClicked) {
+                var step = 3;
+                if (fruitsX.value > 2) { step = 23; }
+                else if (fruitsX.value >= 1 && fruitsX.value < 2) { step = 12; }
+                else if (fruitsX.value >= 0 && fruitsX.value < 1) { step = 3; }
+                console.log("step: " + step);
+
+                // keep going
+                if (!(fruitsX.value == 0 && fruitsX.regY <= fruitsX.goal + step * 2 && fruitsX.regY >= fruitsX.goal - step * 2)) {
+                    fruitsX.regY -= step;
+                    if (fruitsX.regY <= 207 - step) {
+                        fruitsX.regY = 759; // 207 is equal to 759,  then go to 759, but it cause one tick?
+                        fruitsX.value--;
+                        console.log("fruitsX.value: " + fruitsX.value);
+                    } 
+                } else {
+                    this.spinDoneCount++;
+                    console.log("this.spinDoneCount in spinning:" + this.spinDoneCount);
+                }
             }
+
         }
 
     }

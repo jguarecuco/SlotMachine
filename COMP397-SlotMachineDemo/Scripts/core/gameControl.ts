@@ -78,7 +78,6 @@ function init():void {
 function gameLoop(event: createjs.Event): void {
     stats.begin(); // start counting
 
-
     currentState.update(); // calling State's update method
     stage.update(); // redraw/refresh stage every frame
 
