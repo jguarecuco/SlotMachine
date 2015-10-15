@@ -1,5 +1,4 @@
 ﻿/// <reference path="../config/config.ts" />
-
 /// <reference path="../typings/jquery/jquery.d.ts" />
 /// <reference path="../typings/stats/stats.d.ts" />
 /// <reference path="../typings/createjs-lib/createjs-lib.d.ts" />
@@ -7,21 +6,14 @@
 /// <reference path="../typings/tweenjs/tweenjs.d.ts" />
 /// <reference path="../typings/soundjs/soundjs.d.ts" />
 /// <reference path="../typings/preloadjs/preloadjs.d.ts" />
-
 /// <reference path="../objects/tile.ts" />
-
 /// <reference path="../objects/label.ts" />
 /// <reference path="../objects/button.ts" />
 /// <reference path="../objects/betbutton.ts" />
-
 /// <reference path="../objects/background.ts" />
-
 /// <reference path="../objects/scene.ts" />
-
-
 /// <reference path="../states/over.ts" />
 /// <reference path="../states/game.ts" />
-
 /// <reference path="../states/menu.ts" />
 
 
@@ -69,7 +61,7 @@ function init():void {
     createjs.Ticker.on("tick", gameLoop); // update gameLoop every frame
     setupStats(); // sets up our stats counting
 
-    state = config.PLAY_STATE;
+    state = config.MENU_STATE;
     changeState(state);
 
 }

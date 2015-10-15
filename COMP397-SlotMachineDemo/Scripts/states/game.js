@@ -28,15 +28,17 @@ var states;
             // CONDITION VAR
             this.isSpinBegun = false;
             this.isSpinOn = false;
+            this.MINregY = 117;
+            this.MAXregY = 669;
         }
         // PUBLIC METHODS
         Game.prototype.start = function () {
             // fruit window
-            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759debug.png", 241, 240, null, 200, 3, 759, false, false);
+            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 241, 240, null, 200, 3, 759, false, false, 23);
             this.addChild(this.fruits1);
-            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet69x759debug.png", 320, 240, null, 400, 3, 690, false, false);
+            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 320, 240, null, 400, 3, 690, false, false, 23);
             this.addChild(this.fruits2);
-            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet69x759debug.png", 396, 240, null, 600, 3, 205, false, false);
+            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 396, 240, null, 600, 3, 205, false, false, 23);
             this.addChild(this.fruits3);
             // background
             this.background = new objects.Background("../../Assets/images/Background.png", 320, 240);
@@ -90,29 +92,30 @@ var states;
             stage.addChild(this);
         };
         Game.prototype.update = function () {
-            // go spin
-            if (this.isSpinBegun && !this.fruits1.hasEnded) {
-                this.spinning(this.fruits1);
-                this.spinning(this.fruits2);
-                this.spinning(this.fruits3);
+            // go spin 
+            if (this.isSpinBegun) {
+                if (!this.fruits1.hasEnded) {
+                    this.spinning(this.fruits1);
+                }
+                if (!this.fruits2.hasEnded) {
+                    this.spinning(this.fruits2);
+                }
+                if (!this.fruits3.hasEnded) {
+                    this.spinning(this.fruits3);
+                }
             }
-            // wait entil spin stop
+            // wait entil all spins stop
             if (this.fruits1.hasBegun && this.fruits1.hasEnded && this.fruits2.hasBegun && this.fruits2.hasEnded && this.fruits3.hasBegun && this.fruits3.hasEnded) {
-                //TOADD && this.fruits2.hasEnded && this.fruits3.hasEnded
                 this.isSpinOn = false;
                 this.applyResult(this.result); // from result to set this.credits ... 
-                this.messageLabel.text = this.result > 0 ? ("You win:\n\n" + this.result) : ("You lose:\n\n" + (-this.result));
-                this.messageLabel.color = this.result > 0 ? "#00f" : "#f00";
-                this.resetFruits();
-                console.log("all three fruits.hasEnded to apply result");
+                this.resetData();
             }
         };
         // --------------------------------------------------- PRIVATE METHODS------------------------------------------------------
         Game.prototype.clickSpinButton = function (event) {
-            //console.log("here 1");
             this.checkPlayable(); // set this.isPlayable
             if (this.isPlayable) {
-                this.messageLabel.text = "On spinning...";
+                this.messageLabel.text = "On going...";
                 this.messageLabel.color = "#000";
                 this.fruits1.hasBegun = true;
                 this.fruits2.hasBegun = true;
@@ -125,45 +128,44 @@ var states;
                 this.fruits2.goal = this.getGoalByFruit(this.betLine[1]);
                 this.fruits3.goal = this.getGoalByFruit(this.betLine[2]);
                 // get result from fruits
-                this.result = this.determineWinnings(); // from values of this.blanks ... to get result
+                this.result = this.determineWinnings(); // from values of this.blanks ... to get result, not yet apply result here but somewhere else
                 console.log("goals: " + this.betLine[0] + "|" + this.fruits1.goal + ", " + this.betLine[1] + "|" + this.fruits2.goal + ", " + this.betLine[2] + "|" + this.fruits3.goal + " @result: " + this.result);
             }
-            //this.resetFruits();       
         };
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
         Game.prototype.spinning = function (fruitsX) {
             if (fruitsX.hasBegun && !fruitsX.hasEnded) {
                 if (this.isSpinBegun) {
                     // get step
-                    var step;
-                    var MIN = 117, MAX = 669;
                     if (fruitsX.value > 0) {
                         if (fruitsX.value > 2) {
-                            step = 23;
+                            fruitsX.step = 23;
                         }
                         else {
-                            step = 12;
+                            fruitsX.step = 12;
                         }
-                        fruitsX.regY -= step;
-                        if (fruitsX.regY <= MIN) {
-                            fruitsX.regY = 669 - (step + MIN - fruitsX.regY); // from 669 to 117, this 117 should not exist and set to 669 immediately
+                        fruitsX.regY -= fruitsX.step;
+                        if (fruitsX.regY <= this.MINregY) {
+                            fruitsX.regY = this.MAXregY - (fruitsX.step + this.MINregY - fruitsX.regY); // from 669 to 117, this 117 should not exist and set to 669 immediately
                             fruitsX.value--;
                         }
                         console.log("#" + fruitsX.id + " regY: " + fruitsX.regY + " go to " + fruitsX.goal);
                     }
                     else {
-                        step = 3;
-                        if (fruitsX.regY <= fruitsX.goal + step * 2 && fruitsX.regY >= fruitsX.goal - step * 2) {
+                        fruitsX.step = 3;
+                        if (fruitsX.regY <= fruitsX.goal + fruitsX.step + 1 && fruitsX.regY >= fruitsX.goal - fruitsX.step - 1) {
                             fruitsX.hasEnded = true;
                         }
                         else {
-                            fruitsX.regY -= step;
-                            if (fruitsX.regY <= MIN) {
-                                fruitsX.regY = 669 - (step + MIN - fruitsX.regY); // from 669 to 117, this 117 should not exist and set to 669 immediately
+                            if (fruitsX.regY <= this.MINregY + fruitsX.step) {
+                                fruitsX.regY = this.MAXregY - fruitsX.step + (fruitsX.regY - this.MINregY); // from 669 to 117, this 117 should not exist and set to 669 immediately
                                 fruitsX.value--;
                             }
+                            else {
+                                fruitsX.regY -= fruitsX.step;
+                            }
                         }
-                        console.log("ELSE fruitsX.regY: " + fruitsX.regY + " go to " + fruitsX.goal);
+                        console.log("In Else block: #" + fruitsX.id + " regY: " + fruitsX.regY + " go to " + fruitsX.goal);
                     }
                 }
             }
@@ -225,7 +227,7 @@ var states;
             }
             return goal;
         };
-        Game.prototype.resetFruits = function () {
+        Game.prototype.resetData = function () {
             this.bananas = 0; //1
             this.bars = 0; // 2
             this.bells = 0; // 3
@@ -235,12 +237,15 @@ var states;
             this.sevens = 0; //7
             this.blanks = 0; //8
             this.fruits1.value = 3;
+            this.fruits1.step = 23;
             this.fruits1.hasEnded = false;
             this.fruits1.hasBegun = false;
             this.fruits2.value = 3;
+            this.fruits2.step = 23;
             this.fruits2.hasEnded = false;
             this.fruits2.hasBegun = false;
             this.fruits3.value = 3;
+            this.fruits3.step = 23;
             this.fruits3.hasEnded = false;
             this.fruits3.hasBegun = false;
             this.isSpinBegun = false;
@@ -332,6 +337,8 @@ var states;
             this.creditsLabel.text = this.normalize(this.credits, null);
             this.winnings = result > 0 ? result : 0;
             this.winningsLabel.text = this.normalize(this.winnings, null);
+            this.messageLabel.text = this.result > 0 ? ("You win:\n\n" + this.result) : ("You lose:\n\n" + (-this.result));
+            this.messageLabel.color = this.result > 0 ? "#00f" : "#f00";
         };
         Game.prototype.normalize = function (num, length) {
             var output = "";

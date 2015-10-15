@@ -5,10 +5,10 @@
         height: number;
         value: number;
         goal: number;
-
+        step: number;
         hasBegun: boolean = false;
         hasEnded: boolean = false;
-        constructor(fullPath: string, x: number, y: number, regX: number, regY: number, value: number, goal: number, hasBegun:boolean, hasEnded:boolean) {
+        constructor(fullPath: string, x: number, y: number, regX: number, regY: number, value: number, goal: number, hasBegun:boolean, hasEnded:boolean, step:number) {
 
             super(fullPath);    //Assets.getResult(pathString)  -> image with white background which is not wanted
             this.x = x;
@@ -21,6 +21,7 @@
             this.goal = goal ? goal : 186; // goal should be between 214 and 766(not included cause it will be set to 214) according to current canvas size, fruitsSheet size and their positions
             this.hasBegun = hasBegun ? hasBegun : false;
             this.hasEnded = hasEnded ? hasEnded : false;
+            this.step = step ? step : 3;
         }
     }
 }
