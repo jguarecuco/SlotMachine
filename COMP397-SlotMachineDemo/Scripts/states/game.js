@@ -27,15 +27,16 @@ var states;
             //lossNumber: number = 0;
             // CONDITION VAR
             this.isSpinBegun = false;
+            this.isSpinOn = false;
         }
         // PUBLIC METHODS
         Game.prototype.start = function () {
             // fruit window
-            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759debug.png", 241, 240, null, 186, 3, 759, false, false);
+            this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759debug.png", 241, 240, null, 200, 3, 759, false, false);
             this.addChild(this.fruits1);
-            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet69x759debug.png", 320, 240, null, 669, 3, 690, false, false);
+            this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet69x759debug.png", 320, 240, null, 400, 3, 690, false, false);
             this.addChild(this.fruits2);
-            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet69x759debug.png", 396, 240, null, 222, 3, 205, false, false);
+            this.fruits3 = new objects.Tile("../../Assets/images/fruitsSheet69x759debug.png", 396, 240, null, 600, 3, 205, false, false);
             this.addChild(this.fruits3);
             // background
             this.background = new objects.Background("../../Assets/images/Background.png", 320, 240);
@@ -87,39 +88,45 @@ var states;
             this.horizontalLine = new createjs.Rectangle(320, 240, 320, 3);
             // final
             stage.addChild(this);
-            //alert(this.isSpinClicked);
         };
         Game.prototype.update = function () {
             // go spin
             if (this.isSpinBegun && !this.fruits1.hasEnded) {
                 this.spinning(this.fruits1);
+                this.spinning(this.fruits2);
+                this.spinning(this.fruits3);
             }
             // wait entil spin stop
-            if (this.fruits1.hasBegun && this.fruits1.hasEnded) {
+            if (this.fruits1.hasBegun && this.fruits1.hasEnded && this.fruits2.hasBegun && this.fruits2.hasEnded && this.fruits3.hasBegun && this.fruits3.hasEnded) {
                 //TOADD && this.fruits2.hasEnded && this.fruits3.hasEnded
+                this.isSpinOn = false;
                 this.applyResult(this.result); // from result to set this.credits ... 
                 this.messageLabel.text = this.result > 0 ? ("You win:\n\n" + this.result) : ("You lose:\n\n" + (-this.result));
                 this.messageLabel.color = this.result > 0 ? "#00f" : "#f00";
                 this.resetFruits();
-                console.log("fruits1.hasBegun && this.fruits1.hasEnded to apply result");
+                console.log("all three fruits.hasEnded to apply result");
             }
         };
         // --------------------------------------------------- PRIVATE METHODS------------------------------------------------------
         Game.prototype.clickSpinButton = function (event) {
-            console.log("here 1");
+            //console.log("here 1");
             this.checkPlayable(); // set this.isPlayable
             if (this.isPlayable) {
+                this.messageLabel.text = "On spinning...";
+                this.messageLabel.color = "#000";
                 this.fruits1.hasBegun = true;
+                this.fruits2.hasBegun = true;
+                this.fruits3.hasBegun = true;
                 this.isSpinBegun = true;
+                this.isSpinOn = true;
                 // get fruits so for result
                 this.betLine = this.Reels(); // from Math.random() to generate betLine(), and set this.blank ... for determinWinnings();
-                this.fruits1.goal = this.setGoalByFruit(this.betLine[0]); // from betLine() to get goal for "this.fruits1"
-                this.fruits2.goal = this.setGoalByFruit(this.betLine[1]);
-                this.fruits3.goal = this.setGoalByFruit(this.betLine[2]);
+                this.fruits1.goal = this.getGoalByFruit(this.betLine[0]); // from betLine() to get goal for "this.fruits1"
+                this.fruits2.goal = this.getGoalByFruit(this.betLine[1]);
+                this.fruits3.goal = this.getGoalByFruit(this.betLine[2]);
                 // get result from fruits
                 this.result = this.determineWinnings(); // from values of this.blanks ... to get result
                 console.log("goals: " + this.betLine[0] + "|" + this.fruits1.goal + ", " + this.betLine[1] + "|" + this.fruits2.goal + ", " + this.betLine[2] + "|" + this.fruits3.goal + " @result: " + this.result);
-                console.log("here now");
             }
             //this.resetFruits();       
         };
@@ -142,7 +149,7 @@ var states;
                             fruitsX.regY = 669 - (step + MIN - fruitsX.regY); // from 669 to 117, this 117 should not exist and set to 669 immediately
                             fruitsX.value--;
                         }
-                        console.log("fruitsX.regY: " + fruitsX.regY + " go to " + fruitsX.goal);
+                        console.log("#" + fruitsX.id + " regY: " + fruitsX.regY + " go to " + fruitsX.goal);
                     }
                     else {
                         step = 3;
@@ -162,28 +169,33 @@ var states;
             }
         };
         Game.prototype.checkPlayable = function () {
-            if (!this.fruits1.hasBegun && !this.isSpinBegun) {
-                if (this.bet > 0) {
-                    if (this.credits < this.bet) {
-                        this.isPlayable = false;
-                        this.messageLabel.text = "Not enough\n\ncredits!";
-                        this.messageLabel.color = "#f00";
-                        this.bet = 0;
-                        this.betLabel.text = this.normalize(this.bet, 3);
+            if (!this.isSpinOn) {
+                if (!this.fruits1.hasBegun && !this.fruits2.hasBegun && !this.fruits3.hasBegun && !this.isSpinBegun) {
+                    if (this.bet > 0) {
+                        if (this.credits < this.bet) {
+                            this.isPlayable = false;
+                            this.messageLabel.text = "Not enough\n\ncredits!";
+                            this.messageLabel.color = "#f00";
+                            this.bet = 0;
+                            this.betLabel.text = this.normalize(this.bet, 3);
+                        }
+                        else {
+                            this.isPlayable = true;
+                            this.betLabel.text = this.normalize(this.bet, 3);
+                        }
                     }
                     else {
-                        this.isPlayable = true;
-                        this.betLabel.text = this.normalize(this.bet, 3);
+                        this.isPlayable = false;
+                        this.messageLabel.text = "Please bet";
+                        this.messageLabel.color = "#f00";
                     }
                 }
-                else {
-                    this.isPlayable = false;
-                    this.messageLabel.text = "Please bet";
-                    this.messageLabel.color = "#f00";
-                }
+            }
+            else {
+                this.isPlayable = false;
             }
         };
-        Game.prototype.setGoalByFruit = function (fruit) {
+        Game.prototype.getGoalByFruit = function (fruit) {
             var goal;
             switch (fruit) {
                 case "Banana":
@@ -232,6 +244,8 @@ var states;
             this.fruits3.hasEnded = false;
             this.fruits3.hasBegun = false;
             this.isSpinBegun = false;
+            this.isSpinOn = false;
+            this.isPlayable = false;
         };
         Game.prototype.resetAll = function () {
             this.credits = 1000;
@@ -252,6 +266,8 @@ var states;
             this.fruits3.hasEnded = false;
             this.fruits3.hasBegun = false;
             this.isSpinBegun = false;
+            this.isSpinOn = false;
+            this.isPlayable = false;
         };
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++
         Game.prototype.determineWinnings = function () {
