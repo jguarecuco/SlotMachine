@@ -69,7 +69,7 @@ function init():void {
     createjs.Ticker.on("tick", gameLoop); // update gameLoop every frame
     setupStats(); // sets up our stats counting
 
-    state = config.MENU_STATE;
+    state = config.PLAY_STATE;
     changeState(state);
 
 }

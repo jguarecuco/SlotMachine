@@ -54,7 +54,7 @@ function init() {
     createjs.Ticker.setFPS(60); // set frame rate to 60 fps
     createjs.Ticker.on("tick", gameLoop); // update gameLoop every frame
     setupStats(); // sets up our stats counting
-    state = config.MENU_STATE;
+    state = config.PLAY_STATE;
     changeState(state);
 }
 // Main Game Loop
