@@ -10,6 +10,7 @@
 /// <reference path="../objects/label.ts" />
 /// <reference path="../objects/button.ts" />
 /// <reference path="../objects/betbutton.ts" />
+/// <reference path="../objects/blinkbutton.ts" />
 /// <reference path="../objects/background.ts" />
 /// <reference path="../objects/scene.ts" />
 /// <reference path="../states/over.ts" />

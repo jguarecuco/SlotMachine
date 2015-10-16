@@ -15,6 +15,9 @@
         betMaxButton: objects.BetButton;
         spinButton: objects.BetButton;
 
+        resetButton: objects.BlinkButton;
+        resetButtonRing: objects.BlinkButton;
+
         jackpotLabel: objects.Label;
         creditsLabel: objects.Label;
         betLabel: objects.Label;
@@ -85,7 +88,24 @@
             this.addChild(this.creditsLabel);
             this.addChild(this.betLabel);
             this.addChild(this.winningsLabel);
+            
+            
+            // resetButton , resetButtonRing
+            this.resetButton = new objects.BlinkButton("../../Assets/images/ResetButton.png", 200, 50, 40, 40, 1, 1);            
+            this.resetButtonRing = new objects.BlinkButton("../../Assets/images/ResetButtonRing.png", 200, 50, 40, 40, 1, 0.5);
+            this.resetButton.on("mouseover", function () {
+                this.resetButtonRing.alpha = this.resetButtonRing.alphaOver;
+            }, this);
+            this.resetButton.on("mouseout", function () {
+                this.resetButtonRing.alpha = this.resetButtonRing.alphaOut;
+            }, this);
+            this.resetButton.on("click", function () {
+                this.resetAll();
+            }, this);
 
+            this.addChild(this.resetButton);
+            this.addChild(this.resetButtonRing);
+            
             // bet1Button
             this.bet1Button = new objects.BetButton("../../Assets/images/Bet1Button.png", (53 + (640 - 375) * .5), 416, 60, 60, 1);
             this.bet1Button.on("click", function () {
@@ -271,14 +291,14 @@
         }
 
         private resetData(): void {
-            this.bananas = 0;//1
-            this.bars = 0;// 2
-            this.bells = 0;// 3
-            this.cherries = 0;//4
-            this.grapes = 0;// 5            
-            this.oranges = 0;// 6          
-            this.sevens = 0;//7
-            this.blanks = 0;  //8
+            this.bananas = 0; 
+            this.bars = 0; 
+            this.bells = 0; 
+            this.cherries = 0; 
+            this.grapes = 0;             
+            this.oranges = 0;           
+            this.sevens = 0; 
+            this.blanks = 0; 
 
             this.fruits1.value = 3;
             this.fruits1.step = 23;
@@ -301,31 +321,24 @@
         }
 
         private resetAll(): void {
+            this.resetData();
+
+            this.jackpot = 5000; // what to do with jackpot ??   
+            this.bet = 0;         
             this.credits = 1000;
             this.winnings = 0;
-            this.jackpot = 5000; // what to do with jackpot ??
             //turn = 0;
-            this.bet = 0;
+            
             //winNumber = 0;
             //lossNumber = 0;
             //winRatio = 0;
 
-            this.fruits1.value = 3;
-            this.fruits1.hasEnded = false;
-            this.fruits1.hasBegun = false;
-
-            this.fruits2.value = 3;
-            this.fruits2.hasEnded = false;
-            this.fruits2.hasBegun = false;
-
-            this.fruits3.value = 3;
-            this.fruits3.hasEnded = false;
-            this.fruits3.hasBegun = false;
-
-            this.isSpinBegun = false;
-            this.isSpinOn = false;
-            this.isPlayable = false;
-
+            this.jackpotLabel.text = this.normalize(this.jackpot, 6);
+            this.betLabel.text = this.normalize(this.bet, 3);
+            this.creditsLabel.text = this.normalize(this.credits, 6);
+            this.winningsLabel.text = this.normalize(this.winnings, 6);
+            this.messageLabel.text = "Welcome";
+            this.messageLabel.color = "#00f";
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
