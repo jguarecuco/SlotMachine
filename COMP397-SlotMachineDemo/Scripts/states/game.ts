@@ -6,8 +6,6 @@
         fruits2: objects.Tile;
         fruits3: objects.Tile;
         background: objects.Background;
-        horizontalLine: createjs.Rectangle;
-
 
         bet1Button: objects.BetButton;
         bet10Button: objects.BetButton;
@@ -17,6 +15,8 @@
 
         resetButton: objects.BlinkButton;
         resetButtonRing: objects.BlinkButton;
+        exitButton: objects.BlinkButton;
+        exitButtonLight: objects.BlinkButton;
 
         jackpotLabel: objects.Label;
         creditsLabel: objects.Label;
@@ -92,7 +92,8 @@
             
             // resetButton , resetButtonRing
             this.resetButton = new objects.BlinkButton("../../Assets/images/ResetButton.png", 200, 50, 40, 40, 1, 1);            
-            this.resetButtonRing = new objects.BlinkButton("../../Assets/images/ResetButtonRing.png", 200, 50, 40, 40, 1, 0.5);
+            this.resetButtonRing = new objects.BlinkButton("../../Assets/images/ResetButtonRing.png", 200, 50, 40, 40, 1, 0.1);
+
             this.resetButton.on("mouseover", function () {
                 this.resetButtonRing.alpha = this.resetButtonRing.alphaOver;
             }, this);
@@ -102,10 +103,32 @@
             this.resetButton.on("click", function () {
                 this.resetAll();
             }, this);
+            this.resetButtonRing.on("click", function () {
+                this.resetAll();
+            }, this);
 
             this.addChild(this.resetButton);
             this.addChild(this.resetButtonRing);
             
+            // exitButton, exitButtonLight
+            this.exitButton = new objects.BlinkButton("../../Assets/images/ExitButton.png", 430, 50, 40, 40, 1, 1);
+            this.exitButtonLight = new objects.BlinkButton("../../Assets/images/ExitButtonLight.png", 430, 50, 40, 40, 1, 0.1);
+
+            this.exitButton.on("mouseover", function () {
+                this.exitButtonLight.alpha = this.exitButtonLight.alphaOver;
+            }, this);
+            this.exitButton.on("mouseout", function () {
+                this.exitButtonLight.alpha = this.exitButtonLight.alphaOut;
+            }, this);
+            this.exitButton.on("click", function () {
+                window.close();
+            }, this);
+            this.exitButtonLight.on("click", function () {
+                window.close();
+            }, this);
+            this.addChild(this.exitButton);
+            this.addChild(this.exitButtonLight)
+
             // bet1Button
             this.bet1Button = new objects.BetButton("../../Assets/images/Bet1Button.png", (53 + (640 - 375) * .5), 416, 60, 60, 1);
             this.bet1Button.on("click", function () {
@@ -141,9 +164,7 @@
             // spinButton
             this.spinButton = new objects.BetButton("../../Assets/images/SpinButton.png", (319 + (640 - 375) * .5), 416, 60, 60, 0);
             this.spinButton.on("click", this.clickSpinButton, this); 
-            this.addChild(this.spinButton);
-
-            this.horizontalLine = new createjs.Rectangle(320, 240, 320, 3);
+            this.addChild(this.spinButton);           
             
             // final
             stage.addChild(this);
@@ -337,7 +358,7 @@
             this.betLabel.text = this.normalize(this.bet, 3);
             this.creditsLabel.text = this.normalize(this.credits, 6);
             this.winningsLabel.text = this.normalize(this.winnings, 6);
-            this.messageLabel.text = "Welcome";
+            this.messageLabel.text = "Welcome!";
             this.messageLabel.color = "#00f";
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++

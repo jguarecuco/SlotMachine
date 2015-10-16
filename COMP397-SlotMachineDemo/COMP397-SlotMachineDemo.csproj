@@ -65,11 +65,12 @@
     <Content Include="Assets\images\Bet10Button.png" />
     <Content Include="Assets\images\Bet1Button.png" />
     <Content Include="Assets\images\BetMaxButton.png" />
+    <Content Include="Assets\images\ExitButton.png" />
+    <Content Include="Assets\images\ExitButtonLight.png" />
     <Content Include="Assets\images\fruitsSheet69x759.png" />
     <Content Include="Assets\images\fruitsSheet69x759debug.png" />
     <Content Include="Assets\images\genericButton.png" />
     <Content Include="Assets\images\NextButton.png" />
-    <Content Include="Assets\images\Exit.png" />
     <Content Include="Assets\images\ResetButton.png" />
     <Content Include="Assets\images\ResetButtonRing.png" />
     <Content Include="Assets\images\SpinButton.png" />
