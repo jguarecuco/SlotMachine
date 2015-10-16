@@ -23,18 +23,17 @@ var states;
             this.bells = 0;
             this.sevens = 0;
             this.blanks = 0;
-            //winNumber: number = 0;
-            //lossNumber: number = 0;
             // CONDITION VAR
             this.isSpinBegun = false;
             this.isSpinOn = false;
-            this.MINregY = 117;
-            this.MAXregY = 669;
+            this.MINregY = 117; // minimum regY of fruitSheet, for animation
+            this.MAXregY = 669; // maxmum regY of fruitSheet, for animation
         }
-        // PUBLIC METHODS
+        // --------------------------------------------------- PUBLIC METHODS------------------------------------------------------
+        // --------------------------------------------------- start() ------------------------------------------------------
         Game.prototype.start = function () {
             document.getElementById('header').style.display = "none";
-            // fruit window
+            // fruit window / reel
             this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 241, 240, null, 200, 3, 759, false, false, 23);
             this.addChild(this.fruits1);
             this.fruits2 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 320, 240, null, 400, 3, 690, false, false, 23);
@@ -125,6 +124,7 @@ var states;
             // final
             stage.addChild(this);
         };
+        // --------------------------------------------------- Update()------------------------------------------------------
         Game.prototype.update = function () {
             // go spin 
             if (this.isSpinBegun) {
@@ -145,16 +145,7 @@ var states;
                 this.applyResult(this.result); // from result to set this.credits ... 
                 this.resetData();
             }
-        };
-        Game.prototype.checkJackPot = function () {
-            var jackPotTry = Math.floor(Math.random() * 51 + 1);
-            var jackPotWin = Math.floor(Math.random() * 51 + 1);
-            if (jackPotTry == jackPotWin) {
-                alert("You Won the $" + this.jackpot + " Jackpot!!");
-                this.credits += this.jackpot;
-                this.jackpot = 1000;
-            }
-        };
+        }; // end of update()
         // --------------------------------------------------- PRIVATE METHODS------------------------------------------------------
         Game.prototype.clickSpinButton = function (event) {
             this.checkPlayable(); // set this.isPlayable
@@ -166,7 +157,7 @@ var states;
                 this.fruits3.hasBegun = true;
                 this.isSpinBegun = true;
                 this.isSpinOn = true;
-                // get fruits so for result
+                // get fruits for result
                 this.betLine = this.Reels(); // from Math.random() to generate betLine(), and set this.blank ... for determinWinnings();
                 this.fruits1.goal = this.getGoalByFruit(this.betLine[0]); // from betLine() to get goal for "this.fruits1"
                 this.fruits2.goal = this.getGoalByFruit(this.betLine[1]);
@@ -175,8 +166,8 @@ var states;
                 this.result = this.determineWinnings(); // from values of this.blanks ... to get result, not yet apply result here but somewhere else
                 console.log("goals: " + this.betLine[0] + "|" + this.fruits1.goal + ", " + this.betLine[1] + "|" + this.fruits2.goal + ", " + this.betLine[2] + "|" + this.fruits3.goal + " @result: " + this.result);
             }
-        };
-        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+        }; // end of clickSpinButton
+        // spin animation
         Game.prototype.spinning = function (fruitsX) {
             if (fruitsX.hasBegun && !fruitsX.hasEnded) {
                 if (this.isSpinBegun) {
@@ -202,7 +193,7 @@ var states;
                         }
                         else {
                             if (fruitsX.regY <= this.MINregY + fruitsX.step) {
-                                fruitsX.regY = this.MAXregY - fruitsX.step + (fruitsX.regY - this.MINregY); // from 669 to 117, this 117 should not exist and set to 669 immediately
+                                fruitsX.regY = this.MAXregY - fruitsX.step + (fruitsX.regY - this.MINregY); // just to make animation smoothy at MINregY
                                 fruitsX.value--;
                             }
                             else {
@@ -213,7 +204,7 @@ var states;
                     }
                 }
             }
-        };
+        }; // end of spinning()
         Game.prototype.checkPlayable = function () {
             if (!this.isSpinOn && this.bet > 0 && this.credits >= this.bet && !this.fruits1.hasBegun && !this.fruits2.hasBegun && !this.fruits3.hasBegun && !this.isSpinBegun) {
                 this.spinButton.mouseEnabled = true;
@@ -238,7 +229,8 @@ var states;
                     this.betLabel.text = this.normalize(this.bet, 3);
                 }
             }
-        };
+        }; // end of checkPlayable()
+        // get goal(actually the regY in fruitSheet) by fruit from Real()
         Game.prototype.getGoalByFruit = function (fruit) {
             var goal;
             switch (fruit) {
@@ -268,7 +260,16 @@ var states;
                     break;
             }
             return goal;
-        };
+        }; // getGoalByFruit()
+        Game.prototype.checkJackPot = function () {
+            var jackPotTry = Math.floor(Math.random() * 51 + 1);
+            var jackPotWin = Math.floor(Math.random() * 51 + 1);
+            if (jackPotTry == jackPotWin) {
+                alert("You Won the $" + this.jackpot + " Jackpot!!");
+                this.credits += this.jackpot;
+                this.jackpot = 1000;
+            }
+        }; // end of checkJackPot()
         Game.prototype.resetData = function () {
             this.bananas = 0;
             this.bars = 0;
@@ -293,25 +294,20 @@ var states;
             this.isSpinBegun = false;
             this.isSpinOn = false;
             this.isPlayable = false;
-        };
+        }; // end of resetData()
         Game.prototype.resetAll = function () {
             this.resetData();
-            this.jackpot = 5000; // what to do with jackpot ??   
+            this.jackpot = 5000;
             this.bet = 0;
             this.credits = 1000;
             this.winnings = 0;
-            //turn = 0;
-            //winNumber = 0;
-            //lossNumber = 0;
-            //winRatio = 0;
             this.jackpotLabel.text = this.normalize(this.jackpot, 6);
             this.betLabel.text = this.normalize(this.bet, 3);
             this.creditsLabel.text = this.normalize(this.credits, 6);
             this.winningsLabel.text = this.normalize(this.winnings, 6);
             this.messageLabel.text = "Welcome!";
             this.messageLabel.color = "#00f";
-        };
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        }; // end of resetAll()
         Game.prototype.determineWinnings = function () {
             var result = 0;
             if (this.blanks == 0) {
@@ -367,17 +363,17 @@ var states;
             else {
                 result = -this.bet;
             }
-            return result; //$ 
-        }; // end of this.determineWinnings = function(): void 
+            return result;
+        }; // end of determineWinnings()
         Game.prototype.applyResult = function (result) {
             this.credits += result;
             this.creditsLabel.text = this.normalize(this.credits, null);
             this.winnings = result > 0 ? result : 0;
             this.winningsLabel.text = this.normalize(this.winnings, null);
-            this.messageLabel.text = this.result > 0 ? ("You win:\n\n" + this.result) : ("You lose:\n\n" + (-this.result));
+            this.messageLabel.text = this.result > 0 ? ("You won:\n\n" + this.result) : ("You lost:\n\n" + (-this.result));
             this.messageLabel.color = this.result > 0 ? "#00f" : "#f00";
             this.jackpotLabel.text = this.normalize(this.jackpot, null);
-        };
+        }; // end of applyResult()
         Game.prototype.normalize = function (num, length) {
             var output = "";
             var length = (length != null && length > 0) ? length : 6;
@@ -402,8 +398,7 @@ var states;
                     break;
             }
             return output;
-        };
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        }; // end of normalize()
         Game.prototype.checkRange = function (value, lowerBounds, upperBounds) {
             if (value >= lowerBounds && value <= upperBounds) {
                 return value;
@@ -411,7 +406,7 @@ var states;
             else {
                 return !value;
             }
-        }; // end of this.checkRange = function (value: number, lowerBounds: number, upperBounds: number): any
+        }; // end of checkRange()
         Game.prototype.Reels = function () {
             var betLine = [" ", " ", " "];
             var outCome = [0, 0, 0];
@@ -453,7 +448,7 @@ var states;
                 }
             }
             return betLine;
-        }; // end of this.Reels = function (): any
+        }; // end of Reels()
         return Game;
     })(objects.Scene);
     states.Game = Game;

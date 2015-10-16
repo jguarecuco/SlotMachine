@@ -37,8 +37,6 @@
         bells: number = 0;
         sevens: number = 0;
         blanks: number = 0;
-        //winNumber: number = 0;
-        //lossNumber: number = 0;
 
         // CONDITION VAR
         isSpinBegun: boolean = false;
@@ -48,19 +46,23 @@
         betLine: any;
         result: number; 
 
-        MINregY: number = 117;
-        MAXregY: number = 669;
+        MINregY: number = 117;  // minimum regY of fruitSheet, for animation
+        MAXregY: number = 669;  // maxmum regY of fruitSheet, for animation
 
         // CONSTRUCTOR
         constructor() {
             super();
         }
           
-        // PUBLIC METHODS
+
+        // --------------------------------------------------- PUBLIC METHODS------------------------------------------------------
+
+        // --------------------------------------------------- start() ------------------------------------------------------
+
         public start(): void {       
             document.getElementById('header').style.display = "none";
 
-            // fruit window
+            // fruit window / reel
             this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 241, 240, null, 200, 3, 759,false,false, 23);
             this.addChild(this.fruits1);          
             
@@ -77,9 +79,7 @@
             // labels
             this.messageLabel = new objects.Label("Welcome!", "15px Consolas", "#00f", 600, 150);
             this.messageLabel.textAlign = "center";
-
             this.jackpotLabel = new objects.Label(this.normalize(this.jackpot, 6), "26px Consolas", "#f00", (190 + (640 - 375) * .5), 60);
-
             this.creditsLabel = new objects.Label(this.normalize(this.credits,6), "26px Consolas", "#f00", (93 + (640 - 375) * .5), 343);
             this.betLabel = new objects.Label(this.normalize(this.bet,3), "26px Consolas", "#f00", (167 + (640 - 375) * .5), 343);
             this.winningsLabel = new objects.Label(this.normalize(this.winnings, 6), "26px Consolas", "#f00", (282 + (640 - 375) * .5), 343);
@@ -135,7 +135,6 @@
             this.bet1Button.on("click", function () {
                 this.bet = this.bet1Button.value;
                 this.checkPlayable();
-
             }, this); 
             this.addChild(this.bet1Button);    
 
@@ -172,6 +171,8 @@
             stage.addChild(this);
         }
 
+        // --------------------------------------------------- Update()------------------------------------------------------
+
         public update(): void {
             // go spin 
             if (this.isSpinBegun) {
@@ -187,31 +188,22 @@
             }
             
             // wait entil all spins stop
-            if (this.fruits1.hasBegun && this.fruits1.hasEnded && this.fruits2.hasBegun && this.fruits2.hasEnded && this.fruits3.hasBegun && this.fruits3.hasEnded) { 
-               
+            if (this.fruits1.hasBegun && this.fruits1.hasEnded && this.fruits2.hasBegun && this.fruits2.hasEnded && this.fruits3.hasBegun && this.fruits3.hasEnded) {                
                 this.isSpinOn = false;
                 this.checkJackPot();
                 this.applyResult(this.result);   // from result to set this.credits ... 
                 this.resetData();
             }
-        }
+        }// end of update()
 
-        private checkJackPot() {
-            var jackPotTry = Math.floor(Math.random() * 51 + 1);
-            var jackPotWin = Math.floor(Math.random() * 51 + 1);
-            if (jackPotTry == jackPotWin) {
-                alert("You Won the $" + this.jackpot + " Jackpot!!");
-                this.credits += this.jackpot;
-                this.jackpot = 1000;
-            }
-        }
+
 
         // --------------------------------------------------- PRIVATE METHODS------------------------------------------------------
+
         private clickSpinButton(event: createjs.MouseEvent): void { 
             
             this.checkPlayable(); // set this.isPlayable
             if (this.isPlayable) {         
-
                 this.messageLabel.text = "On going..." 
                 this.messageLabel.color = "#000";
                 this.fruits1.hasBegun = true;  
@@ -220,19 +212,21 @@
                 this.isSpinBegun = true;
                 this.isSpinOn = true;
                 
-                // get fruits so for result
+                // get fruits for result
                 this.betLine = this.Reels();   // from Math.random() to generate betLine(), and set this.blank ... for determinWinnings();
 
                 this.fruits1.goal = this.getGoalByFruit(this.betLine[0]);// from betLine() to get goal for "this.fruits1"
                 this.fruits2.goal = this.getGoalByFruit(this.betLine[1]);
                 this.fruits3.goal = this.getGoalByFruit(this.betLine[2]);
+
                 // get result from fruits
                 this.result = this.determineWinnings();  // from values of this.blanks ... to get result, not yet apply result here but somewhere else
                 console.log("goals: " + this.betLine[0] + "|" + this.fruits1.goal + ", " + this.betLine[1] + "|" + this.fruits2.goal + ", " + this.betLine[2] + "|" + this.fruits3.goal + " @result: " + this.result);
             }     
-        }
+        } // end of clickSpinButton
 
-        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+
+        // spin animation
         private spinning(fruitsX: objects.Tile): void {
             if (fruitsX.hasBegun && !fruitsX.hasEnded) {
                 if (this.isSpinBegun) {
@@ -253,7 +247,7 @@
                             fruitsX.hasEnded = true;
                         } else {
                             if (fruitsX.regY <= this.MINregY + fruitsX.step) {
-                                fruitsX.regY = this.MAXregY - fruitsX.step + (fruitsX.regY - this.MINregY); // from 669 to 117, this 117 should not exist and set to 669 immediately
+                                fruitsX.regY = this.MAXregY - fruitsX.step + (fruitsX.regY - this.MINregY);  // just to make animation smoothy at MINregY
                                 fruitsX.value--;
                             } else {
                                 fruitsX.regY -= fruitsX.step;
@@ -263,7 +257,8 @@
                     }
                 }
             }
-        }
+        } // end of spinning()
+
 
         private checkPlayable(): void {
             if (!this.isSpinOn && this.bet > 0 && this.credits >= this.bet && !this.fruits1.hasBegun && !this.fruits2.hasBegun && !this.fruits3.hasBegun && !this.isSpinBegun) {
@@ -288,11 +283,11 @@
                     this.betLabel.text = this.normalize(this.bet, 3);
                 }
             }
-        }
+        } // end of checkPlayable()
                
 
+        // get goal(actually the regY in fruitSheet) by fruit from Real()
         private getGoalByFruit(fruit: string): number {
-
             var goal: number;
             switch (fruit) {
                 case "Banana":
@@ -321,7 +316,19 @@
                     break;
             }
             return goal;
-        }
+        } // getGoalByFruit()
+
+
+        private checkJackPot() {
+            var jackPotTry = Math.floor(Math.random() * 51 + 1);
+            var jackPotWin = Math.floor(Math.random() * 51 + 1);
+            if (jackPotTry == jackPotWin) {
+                alert("You Won the $" + this.jackpot + " Jackpot!!");
+                this.credits += this.jackpot;
+                this.jackpot = 1000;
+            }
+        }  // end of checkJackPot()
+
 
         private resetData(): void {
             this.bananas = 0; 
@@ -351,20 +358,16 @@
             this.isSpinBegun = false;
             this.isSpinOn = false;
             this.isPlayable = false;
-        }
+        } // end of resetData()
+
 
         private resetAll(): void {
             this.resetData();
 
-            this.jackpot = 5000; // what to do with jackpot ??   
+            this.jackpot = 5000;
             this.bet = 0;         
             this.credits = 1000;
             this.winnings = 0;
-            //turn = 0;
-            
-            //winNumber = 0;
-            //lossNumber = 0;
-            //winRatio = 0;
 
             this.jackpotLabel.text = this.normalize(this.jackpot, 6);
             this.betLabel.text = this.normalize(this.bet, 3);
@@ -372,10 +375,10 @@
             this.winningsLabel.text = this.normalize(this.winnings, 6);
             this.messageLabel.text = "Welcome!";
             this.messageLabel.color = "#00f";
-        }
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        } // end of resetAll()
 
-        public determineWinnings(): number {
+
+        private determineWinnings(): number {
             var result:number = 0;
             if (this.blanks == 0) {
                 if (this.grapes == 3) {
@@ -429,20 +432,22 @@
             } else {
                 result = -this.bet;
             }
-            return result;//$ 
-        } // end of this.determineWinnings = function(): void 
+            return result; 
+        } // end of determineWinnings()
+
 
         private applyResult(result: number): void {
             this.credits += result;
             this.creditsLabel.text = this.normalize(this.credits, null);
             this.winnings = result > 0 ? result : 0;
             this.winningsLabel.text = this.normalize(this.winnings, null);
-            this.messageLabel.text = this.result > 0 ? ("You win:\n\n" + this.result) : ("You lose:\n\n" + (-this.result));
+            this.messageLabel.text = this.result > 0 ? ("You won:\n\n" + this.result) : ("You lost:\n\n" + (-this.result));
             this.messageLabel.color = this.result > 0 ? "#00f" : "#f00";
             this.jackpotLabel.text = this.normalize(this.jackpot, null);
-        }
+        } // end of applyResult()
 
-        public normalize(num: number, length: number): string {
+
+        private normalize(num: number, length: number): string {
             var output: string = "";
             var length: number = (length != null && length > 0) ? length : 6;
 
@@ -466,20 +471,18 @@
                     output = "" + num;
                     break;
             }
-
             return output;
-        }      
+        }      // end of normalize()
         
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-        public checkRange(value: number, lowerBounds: number, upperBounds: number): any {
+        
+        private checkRange(value: number, lowerBounds: number, upperBounds: number): any {
             if (value >= lowerBounds && value <= upperBounds) {
                 return value;
             }
             else {
                 return !value;
             }
-        } // end of this.checkRange = function (value: number, lowerBounds: number, upperBounds: number): any
+        } // end of checkRange()
        
         
         private Reels(): any {
@@ -524,6 +527,6 @@
                 }
             }
             return betLine; 
-        } // end of this.Reels = function (): any
+        } // end of Reels()
     }
 } 
