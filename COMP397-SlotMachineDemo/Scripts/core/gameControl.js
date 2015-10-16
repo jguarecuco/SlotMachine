@@ -85,7 +85,7 @@ function changeState(state) {
             currentState = menu;
             break;
         case config.PLAY_STATE:
-            // show the play scene
+            // show the play scene            
             stage.removeAllChildren();
             game = new states.Game();
             currentState = game;

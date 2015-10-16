@@ -33,6 +33,7 @@ var states;
         }
         // PUBLIC METHODS
         Game.prototype.start = function () {
+            document.getElementById('header').style.display = "none";
             // fruit window
             this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 241, 240, null, 200, 3, 759, false, false, 23);
             this.addChild(this.fruits1);
@@ -140,8 +141,18 @@ var states;
             // wait entil all spins stop
             if (this.fruits1.hasBegun && this.fruits1.hasEnded && this.fruits2.hasBegun && this.fruits2.hasEnded && this.fruits3.hasBegun && this.fruits3.hasEnded) {
                 this.isSpinOn = false;
+                this.checkJackPot();
                 this.applyResult(this.result); // from result to set this.credits ... 
                 this.resetData();
+            }
+        };
+        Game.prototype.checkJackPot = function () {
+            var jackPotTry = Math.floor(Math.random() * 51 + 1);
+            var jackPotWin = Math.floor(Math.random() * 51 + 1);
+            if (jackPotTry == jackPotWin) {
+                alert("You Won the $" + this.jackpot + " Jackpot!!");
+                this.credits += this.jackpot;
+                this.jackpot = 1000;
             }
         };
         // --------------------------------------------------- PRIVATE METHODS------------------------------------------------------
@@ -204,30 +215,28 @@ var states;
             }
         };
         Game.prototype.checkPlayable = function () {
-            if (!this.isSpinOn) {
-                if (!this.fruits1.hasBegun && !this.fruits2.hasBegun && !this.fruits3.hasBegun && !this.isSpinBegun) {
-                    if (this.bet > 0) {
-                        if (this.credits < this.bet) {
-                            this.isPlayable = false;
-                            this.messageLabel.text = "Not enough\n\ncredits!";
-                            this.messageLabel.color = "#f00";
-                            this.bet = 0;
-                            this.betLabel.text = this.normalize(this.bet, 3);
-                        }
-                        else {
-                            this.isPlayable = true;
-                            this.betLabel.text = this.normalize(this.bet, 3);
-                        }
-                    }
-                    else {
-                        this.isPlayable = false;
-                        this.messageLabel.text = "Please bet";
-                        this.messageLabel.color = "#f00";
-                    }
-                }
+            if (!this.isSpinOn && this.bet > 0 && this.credits >= this.bet && !this.fruits1.hasBegun && !this.fruits2.hasBegun && !this.fruits3.hasBegun && !this.isSpinBegun) {
+                this.spinButton.mouseEnabled = true;
+                this.spinButton.alpha = 1;
+                this.isPlayable = true;
+                this.betLabel.text = this.normalize(this.bet, 3);
             }
             else {
                 this.isPlayable = false;
+                this.spinButton.mouseEnabled = false;
+                this.spinButton.alpha = 0.3;
+                if (this.credits < this.bet) {
+                    this.messageLabel.text = "Not enough\n\ncredits!";
+                    this.messageLabel.color = "#f00";
+                    this.bet = 0;
+                    this.betLabel.text = this.normalize(this.bet, 3);
+                }
+                if (this.bet = 0) {
+                    this.messageLabel.text = "Not enough\n\ncredits!";
+                    this.messageLabel.color = "#f00";
+                    this.bet = 0;
+                    this.betLabel.text = this.normalize(this.bet, 3);
+                }
             }
         };
         Game.prototype.getGoalByFruit = function (fruit) {
@@ -367,6 +376,7 @@ var states;
             this.winningsLabel.text = this.normalize(this.winnings, null);
             this.messageLabel.text = this.result > 0 ? ("You win:\n\n" + this.result) : ("You lose:\n\n" + (-this.result));
             this.messageLabel.color = this.result > 0 ? "#00f" : "#f00";
+            this.jackpotLabel.text = this.normalize(this.jackpot, null);
         };
         Game.prototype.normalize = function (num, length) {
             var output = "";
