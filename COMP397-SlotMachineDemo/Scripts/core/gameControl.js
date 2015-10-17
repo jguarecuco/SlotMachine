@@ -39,8 +39,13 @@ var manifest = [
     { id: "BetMaxButton", src: "../../Assets/images/BetMaxButton.png" },
     { id: "SpinButton", src: "../../Assets/images/SpinButton.png" },
     { id: "fruitsSheet", src: "../../Assets/images/fruitsSheet.png" },
-    { id: "yay", src: "../../Assets/audio/yay.ogg" },
-    { id: "buttonSound", src: "../../Assets/audio/buttonSound.ogg" } // not work ?
+    { id: "yay", src: "../../Assets/audio/yay.ogg" } /*,
+    { id: "coins", src: "../../Assets/audio/coins.wav" },
+    { id: "childrenoh", src: "../../Assets/audio/childrenoh.ogg" },
+    { id: "button1", src: "../../Assets/audio/button1.wav" },
+    { id: "sewing_2", src: "../../Assets/audio/sewing_2.ogg" },
+    { id: "soldier-no", src: "../../Assets/audio/soldier-no.mp3" },
+    { id: "power_down", src: "../../Assets/audio/power_down.ogg" }*/
 ];
 function preload() {
     assets = new createjs.LoadQueue();

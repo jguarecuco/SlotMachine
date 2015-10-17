@@ -29,9 +29,16 @@ var states;
             this.MINregY = 117; // minimum regY of fruitSheet, for animation
             this.MAXregY = 669; // maxmum regY of fruitSheet, for animation
         }
-        // --------------------------------------------------- PUBLIC METHODS------------------------------------------------------
-        // --------------------------------------------------- start() ------------------------------------------------------
+        // ------------------------------------------------- PUBLIC METHODS----------------------------------------------
+        // ------------------------------------------------- start() ----------------------------------------------------
         Game.prototype.start = function () {
+            // sound  
+            createjs.Sound.registerSound("../../Assets/audio/coins.wav", "coins");
+            createjs.Sound.registerSound("../../Assets/audio/childrenoh.ogg", "childrenoh");
+            createjs.Sound.registerSound("../../Assets/audio/button1.wav", "button1");
+            createjs.Sound.registerSound("../../Assets/audio/sewing_2.ogg", "sewing_2");
+            createjs.Sound.registerSound("../../Assets/audio/soldier-no.mp3", "soldier-no");
+            createjs.Sound.registerSound("../../Assets/audio/power_down.ogg", "power_down");
             // fruit window / reel
             this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 241, 240, null, 200, 3, 759, false, false, 23);
             this.addChild(this.fruits1);
@@ -65,9 +72,13 @@ var states;
             }, this);
             this.resetButton.on("click", function () {
                 this.resetAll();
+                createjs.Sound.stop();
+                createjs.Sound.play("yay");
             }, this);
             this.resetButtonRing.on("click", function () {
                 this.resetAll();
+                createjs.Sound.stop();
+                createjs.Sound.play("yay");
             }, this);
             this.addChild(this.resetButton);
             this.addChild(this.resetButtonRing);
@@ -81,16 +92,21 @@ var states;
                 this.exitButtonLight.alpha = this.exitButtonLight.alphaOut;
             }, this);
             this.exitButton.on("click", function () {
-                window.close();
+                createjs.Sound.stop();
+                createjs.Sound.play("power_down");
+                setTimeout(function () { window.close(); }, 2500);
             }, this);
             this.exitButtonLight.on("click", function () {
-                window.close();
+                createjs.Sound.stop();
+                createjs.Sound.play("power_down");
+                setTimeout(function () { window.close(); }, 2500);
             }, this);
             this.addChild(this.exitButton);
             this.addChild(this.exitButtonLight);
             // bet1Button
             this.bet1Button = new objects.BetButton("../../Assets/images/Bet1Button.png", (53 + (640 - 375) * .5), 416, 60, 60, 1);
             this.bet1Button.on("click", function () {
+                createjs.Sound.play("button1");
                 this.bet = this.bet1Button.value;
                 this.checkPlayable();
             }, this);
@@ -98,6 +114,7 @@ var states;
             // bet10Button
             this.bet10Button = new objects.BetButton("../../Assets/images/Bet10Button.png", (118 + (640 - 375) * .5), 416, 60, 60, 10);
             this.bet10Button.on("click", function () {
+                createjs.Sound.play("button1");
                 this.bet = this.bet10Button.value;
                 this.checkPlayable();
             }, this);
@@ -105,6 +122,7 @@ var states;
             // bet100Button
             this.bet100Button = new objects.BetButton("../../Assets/images/Bet100Button.png", (183 + (640 - 375) * .5), 416, 60, 60, 100);
             this.bet100Button.on("click", function () {
+                createjs.Sound.play("button1");
                 this.bet = this.bet100Button.value;
                 this.checkPlayable();
             }, this);
@@ -112,6 +130,7 @@ var states;
             // betMaxButton
             this.betMaxButton = new objects.BetButton("../../Assets/images/BetMaxButton.png", (248 + (640 - 375) * .5), 416, 60, 60, 999);
             this.betMaxButton.on("click", function () {
+                createjs.Sound.play("button1");
                 this.bet = this.betMaxButton.value;
                 this.checkPlayable();
             }, this);
@@ -140,15 +159,16 @@ var states;
             // wait entil all spins stop
             if (this.fruits1.hasBegun && this.fruits1.hasEnded && this.fruits2.hasBegun && this.fruits2.hasEnded && this.fruits3.hasBegun && this.fruits3.hasEnded) {
                 this.isSpinOn = false;
-                this.checkJackPot();
                 this.applyResult(this.result); // from result to set this.credits ... 
                 this.resetData();
             }
         }; // end of update()
         // --------------------------------------------------- PRIVATE METHODS------------------------------------------------------
         Game.prototype.clickSpinButton = function (event) {
+            createjs.Sound.play("button1");
             this.checkPlayable(); // set this.isPlayable
             if (this.isPlayable) {
+                createjs.Sound.play("sewing_2");
                 this.messageLabel.text = "On going...";
                 this.messageLabel.color = "#000";
                 this.fruits1.hasBegun = true;
@@ -264,6 +284,7 @@ var states;
             var jackPotTry = Math.floor(Math.random() * 51 + 1);
             var jackPotWin = Math.floor(Math.random() * 51 + 1);
             if (jackPotTry == jackPotWin) {
+                createjs.Sound.play("childrenoh");
                 alert("You Won the $" + this.jackpot + " Jackpot!!");
                 this.credits += this.jackpot;
                 this.jackpot = 1000;
@@ -365,9 +386,18 @@ var states;
             return result;
         }; // end of determineWinnings()
         Game.prototype.applyResult = function (result) {
+            createjs.Sound.stop();
             this.credits += result;
             this.creditsLabel.text = this.normalize(this.credits, null);
             this.winnings = result > 0 ? result : 0;
+            if (result > 0) {
+                createjs.Sound.play("yay");
+                createjs.Sound.play("coins");
+                this.checkJackPot();
+            }
+            else {
+                createjs.Sound.play("soldier-no");
+            }
             this.winningsLabel.text = this.normalize(this.winnings, null);
             this.messageLabel.text = this.result > 0 ? ("You won:\n\n" + this.result) : ("You lost:\n\n" + (-this.result));
             this.messageLabel.color = this.result > 0 ? "#00f" : "#f00";

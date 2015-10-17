@@ -14,6 +14,7 @@ var states;
         }
         // PUBLIC METHODS
         Menu.prototype.start = function () {
+            createjs.Sound.registerSound("../../Assets/audio/ignition.mp3", "ignition");
             this._gameLabel = new objects.Label("SLOT MACHINE", "40px Engravers MT", "#f00", 320, 35);
             this._authorLabel = new objects.Label("Author: Yun Kui Pan\nLast Modified by: Yun Kui Pan\nLast Modified Date: 2015-10-16", "16px Consolas", "#000", 450, 80);
             this._authorLabel.lineHeight = 20;
@@ -46,7 +47,8 @@ var states;
         // PRIVATE METHODS ++++++++++++++++++++++++++++++++++++++++++++++
         // Callback function / Event Handler for Start Button Click
         Menu.prototype._clickStartButton = function (event) {
-            createjs.Sound.play("yay"); // activate static class play 
+            //createjs.Sound.play("yay"); // activate static class play 
+            createjs.Sound.play("ignition");
             changeState(config.PLAY_STATE);
         };
         return Menu;
