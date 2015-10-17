@@ -60,7 +60,6 @@
         // --------------------------------------------------- start() ------------------------------------------------------
 
         public start(): void {       
-            document.getElementById('header').style.display = "none";
 
             // fruit window / reel
             this.fruits1 = new objects.Tile("../../Assets/images/fruitsSheet69x759.png", 241, 240, null, 200, 3, 759,false,false, 23);

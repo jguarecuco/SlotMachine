@@ -8,6 +8,7 @@
 /// <reference path="../typings/preloadjs/preloadjs.d.ts" />
 /// <reference path="../objects/tile.ts" />
 /// <reference path="../objects/label.ts" />
+
 /// <reference path="../objects/button.ts" />
 /// <reference path="../objects/betbutton.ts" />
 /// <reference path="../objects/blinkbutton.ts" />
